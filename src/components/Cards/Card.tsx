@@ -36,11 +36,11 @@ const Cards: React.FC<CardProps> = ({ id, title, text, type, createdAt }) => {
 
   return (
     <div
-      className={`w-72 bg-white rounded-b-lg border-t-8 ${borderColor} px-3 py-2 flex flex-col justify-between shadow-md`}
+      className={`w-72 min-h-60 bg-white rounded-b-lg border-t-8 ${borderColor} px-3 py-2 flex flex-col justify-between shadow-md`}
     >
       <p className="text-lg font-bold font-sans">{title}</p>
-      <div className="py-2">
-        <p className="text-gray-400 text-sm">{text}</p>
+      <div className="py-2 ">
+        <p className="text-gray-400 text-sm break-words w-full">{text}</p>
       </div>
       <div className="flex justify-between">
         <svg

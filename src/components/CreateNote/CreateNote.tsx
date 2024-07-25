@@ -44,7 +44,7 @@ const CreateNotes: React.FC = () => {
         id="note"
         cols={10}
         rows={5}
-        maxLength={300}
+        maxLength={150}
         placeholder="Fazer compras"
         value={text}
         onChange={(e) => setText(e.target.value)}
