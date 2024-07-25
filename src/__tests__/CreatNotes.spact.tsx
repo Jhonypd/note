@@ -1,29 +1,69 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
-import CreateNotes from "../components/CreateNote/CreateNote";
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import CreateNotes from '../components/CreateNote/CreateNote';
+import * as TasksContext from '../context/TasksContext';
 
-test("renders CreateNotes component with all elements", () => {
-	render(<CreateNotes />);
+jest.mock('../context/TasksContext', () => ({
+  useTasks: jest.fn(),
+}));
 
-	expect(screen.getByLabelText(/Red color option/i)).toBeInTheDocument();
-	expect(screen.getByLabelText(/Yellow color option/i)).toBeInTheDocument();
-	expect(screen.getByLabelText(/Green color option/i)).toBeInTheDocument();
+describe('Componente CreateNotes', () => {
+  const mockAddTask = jest.fn();
+  
+  beforeEach(() => {
+    (TasksContext.useTasks as jest.Mock).mockReturnValue({
+      addTask: mockAddTask,
+    });
+  });
 
-	const textarea = screen.getByPlaceholderText(/Fazer compras/i);
-	expect(textarea).toBeInTheDocument();
-	expect(textarea).toHaveAttribute("placeholder", "Fazer compras");
+  test('deve renderizar o componente CreateNotes', () => {
+    render(<CreateNotes />);
+    
+    expect(screen.getByPlaceholderText('Fazer compras')).toBeInTheDocument();
+    expect(screen.getByLabelText('Tipo')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Salvar/i })).toBeInTheDocument();
+  });
 
-	expect(screen.getByLabelText(/Tipo/i)).toBeInTheDocument();
+  test('deve chamar addTask quando os campos são preenchidos e o botão Salvar é clicado', () => {
+    render(<CreateNotes />);
+    
+    fireEvent.change(screen.getByPlaceholderText('Fazer compras'), {
+      target: { value: 'Comprar leite' },
+    });
+    fireEvent.change(screen.getByLabelText('Tipo'), {
+      target: { value: 'Escolar' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Salvar/i }));
+    
+    expect(mockAddTask).toHaveBeenCalledWith('Escolar', 'Comprar leite');
+  });
 
-	expect(screen.getByLabelText(/Salvar nota/i)).toBeInTheDocument();
-});
+  test('deve limpar os campos após salvar', () => {
+    render(<CreateNotes />);
+    
+    fireEvent.change(screen.getByPlaceholderText('Fazer compras'), {
+      target: { value: 'Comprar leite' },
+    });
+    fireEvent.change(screen.getByLabelText('Tipo'), {
+      target: { value: 'Escolar' },
+    });
+    
+    fireEvent.click(screen.getByRole('button', { name: /Salvar/i }));
+    
+    expect(screen.getByPlaceholderText('Fazer compras')).toHaveValue('');
+    
+    const select = screen.getByLabelText('Tipo') as HTMLSelectElement;
+    expect(select.value).toBe(''); 
+  });
+  
 
-test("handles Select option change", () => {
-	const handleChange = jest.fn();
-	render(<CreateNotes />);
-
-	const select = screen.getByLabelText(/Tipo/i);
-	fireEvent.change(select, { target: { value: "Pessoal" } });
-
-	expect(handleChange).toHaveBeenCalled();
+  test('deve atualizar o tipo quando uma nova opção é selecionada', () => {
+    render(<CreateNotes />);
+    
+    fireEvent.change(screen.getByLabelText('Tipo'), {
+      target: { value: 'Business' },
+    });
+    
+    expect(screen.getByLabelText('Tipo')).toHaveValue('Business');
+  });
 });
