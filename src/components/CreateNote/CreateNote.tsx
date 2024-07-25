@@ -45,7 +45,7 @@ const CreateNotes: React.FC = () => {
         cols={10}
         rows={5}
         maxLength={300}
-        placeholder="Descrição"
+        placeholder="Fazer compras"
         value={text}
         onChange={(e) => setText(e.target.value)}
       ></textarea>
@@ -58,7 +58,7 @@ const CreateNotes: React.FC = () => {
             options={types}
             value={type}
             onChange={(e) => setType(e.target.value)}
-            defaultValue="tipo"
+            defaultValue="Selecione um tipo"
             label="Tipo"
           />
         </div>
