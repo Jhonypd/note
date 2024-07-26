@@ -29,6 +29,7 @@ describe("Componente EditModal", () => {
       />
     );
 
+    expect(screen.getByPlaceholderText("Título da nota")).toBeInTheDocument();
     expect(screen.getByLabelText("Texto da Nota")).toBeInTheDocument();
     expect(screen.getByLabelText("Tipo")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Salvar/i })).toBeInTheDocument();
@@ -47,6 +48,9 @@ describe("Componente EditModal", () => {
       />
     );
 
+    fireEvent.change(screen.getByPlaceholderText("Título da nota"), {
+      target: { value: "Novo título da nota" },
+    });
     fireEvent.change(screen.getByLabelText("Texto da Nota"), {
       target: { value: "Novo texto da nota" },
     });
@@ -55,7 +59,11 @@ describe("Componente EditModal", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
 
-    expect(mockEditTask).toHaveBeenCalledWith("1", { type: "Escolar", text: "Novo texto da nota" });
+    expect(mockEditTask).toHaveBeenCalledWith("1", {
+      type: "Escolar",
+      title: "Novo título da nota",
+      text: "Novo texto da nota",
+    });
     expect(mockCloseModal).toHaveBeenCalled();
   });
 
@@ -76,6 +84,25 @@ describe("Componente EditModal", () => {
     expect(mockCloseModal).toHaveBeenCalled();
   });
 
+  test("deve atualizar o título quando o input é alterado", () => {
+    render(
+      <EditModal
+        id="1"
+        title="Nota Teste"
+        text="Texto da Nota"
+        type="Pessoal"
+        createdAt={new Date()}
+        closeModal={mockCloseModal}
+      />
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Título da nota"), {
+      target: { value: "Novo título da nota" },
+    });
+
+    expect(screen.getByPlaceholderText("Título da nota")).toHaveValue("Novo título da nota");
+  });
+
   test("deve atualizar o tipo quando uma nova opção é selecionada", () => {
     render(
       <EditModal
@@ -91,7 +118,6 @@ describe("Componente EditModal", () => {
     fireEvent.change(screen.getByLabelText("Tipo"), {
       target: { value: "Business" },
     });
-
     expect(screen.getByLabelText("Tipo")).toHaveValue("Business");
   });
 });

@@ -2,19 +2,21 @@ import React, { useState } from "react";
 import Button from "../Button/Button";
 import Select from "../Select/Select";
 import { useTasks } from "../../context/TasksContext";
+import { TaskType } from "../Cards/Card";
 
 interface EditModalProps {
   id: string;
   title: string;
   text: string;
-  type: string;
+  type: TaskType;
   createdAt: Date;
   closeModal: () => void;
 }
 
 const EditModal: React.FC<EditModalProps> = ({ id, title, text, type, createdAt, closeModal }) => {
   const { editTask } = useTasks();
-  const [newType, setNewType] = useState<string>(type);
+  const [newType, setNewType] = useState<TaskType>(type);
+  const [newTitle, setNewTitle] = useState<string>(title);
   const [newText, setNewText] = useState<string>(text);
 
   const types = [
@@ -24,12 +26,12 @@ const EditModal: React.FC<EditModalProps> = ({ id, title, text, type, createdAt,
   ];
 
   const handleSave = () => {
-    editTask(id, { type: newType, text: newText });
+    editTask(id, { type: newType, title: newTitle, text: newText });
     closeModal();
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-95 flex items-center justify-center z-10">
       <div className="w-80 h-auto min-h-16 mx-auto bg-gray-100 rounded-xl shadow-2xl px-2 py-1">
         <div className="flex justify-between items-center">
           <div className="flex items-center p-1">
@@ -55,6 +57,18 @@ const EditModal: React.FC<EditModalProps> = ({ id, title, text, type, createdAt,
           <h3 className="text-lg font-bold">Editar Nota</h3>
         </div>
         <div className="rounded-lg shadow-lg">
+          <div>
+            <label htmlFor="note" className="sr-only">
+              Título da Nota
+            </label>
+            <input
+              type="text"
+              className="w-full text-sm max-h-52 focus-visible:border-b-neutral-500 p-2 outline-none rounded-xl mb-2"
+              placeholder="Título da nota"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+            />
+          </div>
           <label htmlFor="note" className="sr-only">
             Texto da Nota
           </label>
@@ -75,7 +89,7 @@ const EditModal: React.FC<EditModalProps> = ({ id, title, text, type, createdAt,
                 id="tipo"
                 options={types}
                 value={newType}
-                onChange={(e) => setNewType(e.target.value)}
+                onChange={(e) => setNewType(e.target.value as TaskType)}
                 label="Tipo"
               />
             </div>

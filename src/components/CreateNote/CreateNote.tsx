@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import Button from "../Button/Button";
 import Select from "../Select/Select";
 import { useTasks } from "../../context/TasksContext";
+import { TaskType } from "../Cards/Card";
+import { toast } from "react-toastify";
 
 const CreateNotes: React.FC = () => {
   const { addTask } = useTasks();
-  const [type, setType] = useState<string>("");
+  const [type, setType] = useState<TaskType | "">("");
+  const [title, setTitle] = useState<string>("");
   const [text, setText] = useState<string>("");
 
   const types = [
@@ -15,9 +18,13 @@ const CreateNotes: React.FC = () => {
   ];
 
   const handleSave = () => {
-    if (type && text) {
-      addTask(type, text);
+    if (!type || !title || !text) {
+      toast.error(`Todos os campos precisam ser preenchidos`);
+    }
+    if (type && title && text) {
+      addTask(type as TaskType, title, text);
       setType("");
+      setTitle("");
       setText("");
     }
   };
@@ -35,6 +42,18 @@ const CreateNotes: React.FC = () => {
           <span className="w-4 h-4 rounded-full inline-block bg-green-500 cursor-pointer"></span>
         </div>
       </div>
+      <div>
+        <label htmlFor="note" className="sr-only">
+          Título da Nota
+        </label>
+        <input
+          type="text"
+          className="w-full text-sm max-h-52 focus-visible:border-b-neutral-500 p-2 outline-none rounded-xl mb-2"
+          placeholder="Título da nota"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </div>
       <label htmlFor="note" className="sr-only">
         Texto da Nota
       </label>
@@ -45,7 +64,7 @@ const CreateNotes: React.FC = () => {
         cols={10}
         rows={5}
         maxLength={150}
-        placeholder="Fazer compras"
+        placeholder="Fazer compras..."
         value={text}
         onChange={(e) => setText(e.target.value)}
       ></textarea>
@@ -57,7 +76,7 @@ const CreateNotes: React.FC = () => {
             id="tipo"
             options={types}
             value={type}
-            onChange={(e) => setType(e.target.value)}
+            onChange={(e) => setType(e.target.value as TaskType)}
             defaultValue="Selecione um tipo"
             label="Tipo"
           />

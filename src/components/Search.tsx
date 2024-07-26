@@ -1,9 +1,11 @@
-import React from 'react';
-import { CgNotes, CgSearch } from 'react-icons/cg';
-import { useSearch } from '../context/SearchContext';
+import React from "react";
+import { CgNotes, CgSearch } from "react-icons/cg";
+import { useSearch } from "../context/SearchContext";
+import { useNavigate } from "react-router-dom";
 
 const Search: React.FC = () => {
-  const { searchTerm, setSearchTerm } = useSearch();
+  const { searchTerm, setSearchTerm, clearSearchTerm } = useSearch();
+  const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -11,6 +13,8 @@ const Search: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    navigate(`/search?query=${searchTerm}`, { replace: true });
+    clearSearchTerm();
   };
 
   return (

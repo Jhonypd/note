@@ -1,12 +1,28 @@
 import React, { useState } from "react";
 import { useTasks } from "../../context/TasksContext";
 import EditModal from "../EditModal/EditModal";
+import Button from "../Button/Button";
+import { MdOutlinePersonPin, MdOutlineBusinessCenter, MdOutlineSchool } from "react-icons/md";
+
+export type TaskType = "Pessoal" | "Escolar" | "Business";
+
+const TASK_TYPES: Record<TaskType, string> = {
+  Pessoal: "border-green-400",
+  Escolar: "border-blue-400",
+  Business: "border-yellow-400",
+};
+
+const TASK_ICONS: Record<TaskType, JSX.Element> = {
+  Pessoal: <MdOutlinePersonPin />,
+  Escolar: <MdOutlineSchool />,
+  Business: <MdOutlineBusinessCenter />,
+};
 
 interface CardProps {
   id: string;
   title: string;
   text: string;
-  type: string;
+  type: TaskType;
   createdAt: Date;
 }
 
@@ -26,50 +42,41 @@ const Cards: React.FC<CardProps> = ({ id, title, text, type, createdAt }) => {
     setShowEditModal(false);
   };
 
-  const borderColorMap: { [key: string]: string } = {
-    Pessoal: "border-green-400",
-    Escolar: "border-blue-400",
-    Business: "border-yellow-400",
-  };
-
-  const borderColor = borderColorMap[type] || "border-gray-400";
+  const borderColor = TASK_TYPES[type] || "border-gray-400";
+  const typeIcon = TASK_ICONS[type] || null;
 
   return (
     <div
       className={`w-72 min-h-60 bg-white rounded-b-lg border-t-8 ${borderColor} px-3 py-2 flex flex-col justify-between shadow-md`}
     >
-      <p className="text-lg font-bold font-sans">{title}</p>
+      <p className="text-lg font-bold font-sans m-0">{title}</p>
       <div className="py-2 ">
-        <p className="text-gray-400 text-sm break-words w-full">{text}</p>
+        <p className="text-gray-400 text-sm break-words w-full ">{text}</p>
       </div>
-      <div className="flex justify-between">
-        <svg
-          className="w-6 h-6"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          ></path>
-        </svg>
+      <div className="flex justify-between items-center">
+        <div className="flex gap-1 items-center">
+          {typeIcon}
+          <span className="text-gray-500 text-sm">{id}</span>
+        </div>
         <div className="text-sm flex gap-2 py-2">
-          <button
+          <Button
+            variant="warning"
+            size="icon"
             onClick={handleEdit}
-            className="bg-slate-200 px-2 rounded-xl hover:bg-slate-400 transition-colors ease-in-out"
+            className="px-2 rounded-xl hover:bg-slate-400 transition-colors ease-in-out"
+            aria-label={`Editar tarefa ${id}`}
           >
             Editar
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="destructive"
+            size="icon"
             onClick={handleDelete}
-            className="bg-slate-200 px-2 rounded-xl hover:bg-slate-400 transition-colors ease-in-out"
+            className="px-2 rounded-xl hover:bg-slate-400 transition-colors ease-in-out"
+            aria-label={`Deletar tarefa ${id}`}
           >
             Deletar
-          </button>
+          </Button>
         </div>
       </div>
 

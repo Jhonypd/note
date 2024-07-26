@@ -19,15 +19,17 @@ describe("Componente CreateNotes", () => {
   test("deve renderizar o componente CreateNotes", () => {
     render(<CreateNotes />);
 
-    expect(screen.getByPlaceholderText("Fazer compras")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Fazer compras...")).toBeInTheDocument();
     expect(screen.getByLabelText("Tipo")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Salvar/i })).toBeInTheDocument();
   });
 
   test("deve chamar addTask quando os campos são preenchidos e o botão Salvar é clicado", () => {
     render(<CreateNotes />);
-
-    fireEvent.change(screen.getByPlaceholderText("Fazer compras"), {
+    fireEvent.change(screen.getByPlaceholderText("Título da nota"), {
+      target: { value: "Casa" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Fazer compras..."), {
       target: { value: "Comprar leite" },
     });
     fireEvent.change(screen.getByLabelText("Tipo"), {
@@ -35,13 +37,13 @@ describe("Componente CreateNotes", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
 
-    expect(mockAddTask).toHaveBeenCalledWith("Escolar", "Comprar leite");
+    expect(mockAddTask).toHaveBeenCalledWith("Escolar", "Casa", "Comprar leite");
   });
 
   test("deve limpar os campos após salvar", () => {
     render(<CreateNotes />);
-
-    fireEvent.change(screen.getByPlaceholderText("Fazer compras"), {
+    fireEvent.change(screen.getByPlaceholderText("Título da nota"), { target: { value: "Casa" } });
+    fireEvent.change(screen.getByPlaceholderText("Fazer compras..."), {
       target: { value: "Comprar leite" },
     });
     fireEvent.change(screen.getByLabelText("Tipo"), {
@@ -50,7 +52,7 @@ describe("Componente CreateNotes", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
 
-    expect(screen.getByPlaceholderText("Fazer compras")).toHaveValue("");
+    expect(screen.getByPlaceholderText("Fazer compras...")).toHaveValue("");
 
     const select = screen.getByLabelText("Tipo") as HTMLSelectElement;
     expect(select.value).toBe("");

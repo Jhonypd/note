@@ -20,7 +20,13 @@ const NavbarNotes = () => {
       className="bg-white shadow-sm rounded-[10px]"
     >
       <Container fluid className="justify-between">
-        <Logo />
+        <Link
+          to={"/"}
+          aria-label="Direciona para pagina inicial"
+          className="no-underline text-slate-900"
+        >
+          <Logo />
+        </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" className="text-sm p-1" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ms-auto flex justify-center items-center">
